@@ -1,10 +1,9 @@
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <div>
-      
+    <div className="text-5xl text-blue-500">
+      <h1>Hellow World</h1>
     </div>
   )
 }
