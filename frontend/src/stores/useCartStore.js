@@ -6,7 +6,8 @@ export const useCartStore = create((set, get) => ({
   cart: [],
   coupon: null,
   total: 0,
-  subtotoal: 0,
+  subtotal: 0,
+  isCouponApplied: false,
 
   getCartItems: async () => {
     try {
@@ -25,15 +26,15 @@ export const useCartStore = create((set, get) => ({
 
       set((prevState) => {
         const existingItem = prevState.cart.find(
-          (item) => item.id === product._id
+          (item) => item._id === product._id
         );
         const newCart = existingItem
           ? prevState.cart.map((item) =>
               item._id === product._id
-                ? { ...item, quantitiy: item.quantitiy + 1 }
+                ? { ...item, quantity: item.quantity + 1 }
                 : item
             )
-          : [...prevState.cart, { ...product, quantitiy: 1 }];
+          : [...prevState.cart, { ...product, quantity: 1 }];
         return { cart: newCart };
       });
 
@@ -46,15 +47,41 @@ export const useCartStore = create((set, get) => ({
   calculateTotals: () => {
     const { cart, coupon } = get();
     const subtotal = cart.reduce(
-      (sum, item) => sum + item.price * item.quantitiy,
+      (sum, item) => sum + item.price * item.quantity,
       0
     );
     let total = subtotal;
+
     if (coupon) {
       const discount = subtotal * (coupon.discountPercentage / 100);
       total = subtotal - discount;
     }
 
     set({ subtotal, total });
+  },
+
+  removeFromCart: async (productId) => {
+    await axios.delete(`/cart`, { data: { productId } });
+    set((prevState) => ({
+      cart: prevState.cart.filter((item) => item._id !== productId),
+    }));
+    get().calculateTotals();
+  },
+
+  updateQuantity: (productId, quantity) => {
+    set((state) => {
+      if (quantity < 1) {
+        return {
+          cart: state.cart.filter((item) => item._id !== productId),
+        };
+      } else {
+        return {
+          cart: state.cart.map((item) =>
+            item._id === productId ? { ...item, quantity } : item
+          ),
+        };
+      }
+    });
+    get().calculateTotals();
   },
 }));
