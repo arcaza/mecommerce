@@ -8,6 +8,7 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import { useUserStore } from "./stores/useUserStore";
 import LoadingSpinner from "./components/LoadingSpinner";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUserStore();
@@ -15,7 +16,7 @@ function App() {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-  if(checkingAuth) return <LoadingSpinner />
+  if (checkingAuth) return <LoadingSpinner />;
 
   return (
     <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
@@ -31,12 +32,10 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route
             path="/signup"
-            element={user ? <HomePage/> : <SignUpPage />}
+            element={user ? <HomePage /> : <SignUpPage />}
           />
-          <Route
-            path="/login"
-            element={user ? <HomePage/> : <LoginPage />}
-          />
+          <Route path="/login" element={user ? <HomePage /> : <LoginPage />} />
+          <Route path="/secret-dashboard" element={user?.role === "admin" ? <AdminPage /> : <LoginPage />} />
         </Routes>
         <Toaster />
       </div>
