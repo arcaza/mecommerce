@@ -71,15 +71,17 @@ export const updateQuantity = async (req, res) => {
 
 export const getCartProducts = async (req, res) => {
   try {
-    const products = await Product.find({_id: {$in: req.user.cartItems}})
+    const products = await Product.find({ _id: { $in: req.user.cartItems } });
 
     // add quantity for each product
     const cartItems = products.map((product) => {
-        const item = req.user.cartItems.find((cartItems) => cartItems.id === product._id)
-        return {...product.toJSON(), quantity: item.quantity}
-    })
+      const item = req.user.cartItems.find(
+        (cartItem) => cartItem.id === product._id
+      );
+      return { ...product.toJSON(), quantity: item.quantity };
+    });
 
-    res.json(cartItems)
+    res.json(cartItems);
   } catch (error) {
     console.log("Error in getCartProducts controller", error.message);
     res

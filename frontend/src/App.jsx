@@ -9,6 +9,7 @@ import SignUpPage from "./pages/SignUpPage";
 import { useUserStore } from "./stores/useUserStore";
 import LoadingSpinner from "./components/LoadingSpinner";
 import AdminPage from "./pages/AdminPage";
+import CategoryPage from "./pages/CategoryPage";
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUserStore();
@@ -36,6 +37,7 @@ function App() {
           />
           <Route path="/login" element={user ? <HomePage /> : <LoginPage />} />
           <Route path="/secret-dashboard" element={user?.role === "admin" ? <AdminPage /> : <LoginPage />} />
+          <Route path="/category/:category" element={<CategoryPage />} />
         </Routes>
         <Toaster />
       </div>
